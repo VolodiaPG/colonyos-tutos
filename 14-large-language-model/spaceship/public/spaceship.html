@@ -1,0 +1,99 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <script src="../src/jquery-3.6.0.min.js"></script>
+    <script src="../src/crypto/wasm_exec.js"></script>
+    <script src="../src/crypto/crypto.js"></script>
+    <script src="../src/colonies.js"></script>
+
+</head>
+
+<body style="background-color: black;">
+    <img id="spaceship" src="./spaceship.png">
+    <script>
+        $(function () {
+            let colonyName = "dev"
+            let executorId = "1efef9c0360afa2aa3a8179ab2ed1fd14d758956ab72a4e2c12844b7733c5a51"
+            let executorPrvKey = "16f0350d35b7609f3c1c4174a384c2913f893b694dd274829dddd436f69074ad" 
+            let colonies = new Colonies("localhost", "50080")
+			let alien_detected = false;
+			let alarm_on = false;
+			let selfdestruct = false;
+
+			function updateSpaceship() {
+				if (selfdestruct) {
+			        $("#spaceship").attr("src", "./nuclear.png");
+				} else if (alien_detected && alarm_on) {
+			        $("#spaceship").attr("src", "./spaceship_alarm_alien.png");
+			    } else if (alien_detected) {
+			        $("#spaceship").attr("src", "./spaceship_alien.png");
+				} else if (alarm_on) {
+			        $("#spaceship").attr("src", "./spaceship_alarm.png");
+			    } else {
+			        $("#spaceship").attr("src", "./spaceship.png");
+			    }
+			}
+
+            function assign() {
+                colonies.assignLatest(colonyName, -1, executorPrvKey)
+                    .then((process) => {
+
+                        if (process.spec.funcname == "setalien") {
+							if (process.spec.args[0] == "true") {
+								alien_detected = true
+							} else {
+								alien_detected = false
+							}
+							updateSpaceship()
+							colonies.close(process.processid, executorPrvKey)
+						} else if (process.spec.funcname == "setalarm") {
+							if (process.spec.args[0] == "true") {
+								alarm_on = true
+							} else {
+								alarm_on = false
+							}
+							updateSpaceship()
+							colonies.close(process.processid, executorPrvKey)
+						} else if (process.spec.funcname == "selfdestruct") {
+							if (process.spec.args[0] == "true") {
+								selfdestruct = true
+							} else {
+								selfdestruct = false
+							}
+							updateSpaceship()
+							colonies.close(process.processid, executorPrvKey)
+						} else {
+							console.log("Unknown function: " + process.spec.funcname)
+							colonies.error(process.processid, executorPrvKey)
+						}
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            }
+
+            function subscribe() {
+                colonies.subscribeProcesses(colonyName, "spaceship", 30, 0, executorPrvKey, (process) => { // re-subscribe every 30 seconds
+                    assign()
+                })
+                    .catch(() => {
+                        setTimeout(() => {
+                            assign()
+                            subscribe()
+                        }, 2000);
+                    })
+            }
+
+            colonies.load().then(() => {
+				console.log("loaded")
+                assign()
+                subscribe()
+				console.log("subscribed")
+            })
+        })
+    </script>
+</body>
+
+</html>

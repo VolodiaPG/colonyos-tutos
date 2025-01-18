@@ -3,9 +3,29 @@ ColonyOS is fundamentally designed around the concept of function invocation. Wh
 
 In this tutorial, we take it further by demonstrating how to use Large Language Models (LLMs) to call ColonyOS functions. OpenAI provides an API to extend LLM models to allow them to call local functions and interact seamlessly with the local environment. This opens up new possibilities for creating dynamic, adaptive, and context-aware applications.
 
+onad (~) >>> python3.13 -m venv PythonEnv                                                                          16:54:22
+monad (~) >>> source PythonEnv/bin/activate.fish
+
+## Description
+All these examples will need you to have Ollama installed. Ollama makes it very easy to run local LLMs
+on your desktop or laptop.
+
+See: https://ollama.com
+
+## Installation, usage, etc.
+See: https://ollama.com
+
+ollama pull llama3.2
+
+
+pip3 install -r requirements.txt
+
 We are 
 
 
+colonies function exec --func setalarm --args true --targettype spaceship
+colonies function exec --func setalien --args false --targettype spaceship
+colonies function exec --func selfdestruct --args false --targettype spaceship
 
 Welcome to HAL9000! Type '/exit' to exit.
 You: Let me in!

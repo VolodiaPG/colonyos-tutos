@@ -85,10 +85,10 @@ class Colonies {
         return this.sendRPCMsg(msg, prvkey)
     }
 
-    getColony(colonyID, prvkey) {
+    getColony(colonyName, prvkey) {
         var msg = {
             "msgtype": "getcolonymsg",
-            "colonyid": colonyId
+            "colonyname": colonyName
         }
 
         return this.sendRPCMsg(msg, prvkey)
@@ -140,10 +140,10 @@ class Colonies {
     }
 
 
-    getProcesses(colonyId, count, state, prvkey) {
+    getProcesses(colonyName, count, state, prvkey) {
         var msg = {
             "msgtype": "getprocessesmsg",
-            "colonyid": colonyId,
+            "colonyName": colonyName,
             "count": count,
             "state": state
         }
@@ -151,23 +151,23 @@ class Colonies {
         return this.sendRPCMsg(msg, prvkey)
     }
 
-    assign(colonyId, timeout, prvkey) {
+    assign(colonyName, timeout, prvkey) {
         var msg = {
             "msgtype": "assignprocessmsg",
             "latest": false,
             "timeout": timeout,
-            "colonyid": colonyId
+            "colonyname": colonyName
         }
 
         return this.sendRPCMsg(msg, prvkey)
     }
 
-    assignLatest(colonyId, timeout, prvkey) {
+    assignLatest(colonyName, timeout, prvkey) {
         var msg = {
             "msgtype": "assignprocessmsg",
             "latest": true,
             "timeout": timeout,
-            "colonyid": colonyId
+            "colonyname": colonyName
         }
 
         return this.sendRPCMsg(msg, prvkey)
@@ -203,10 +203,11 @@ class Colonies {
     }
 
 
-    subscribeProcesses(executorType, timeout, state, prvkey, callback) {
+    subscribeProcesses(colonyName, executorType, timeout, state, prvkey, callback) {
         var msg = {
             "msgtype": "subscribeprocessesmsg",
             "executortype": executorType,
+			"colonyname": colonyName,
             "state": state,
             "timeout": timeout
         }
