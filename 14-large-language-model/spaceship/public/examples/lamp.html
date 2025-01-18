@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <script src="../src/jquery-3.6.0.min.js"></script>
+    <script src="../src/crypto/wasm_exec.js"></script>
+    <script src="../src/crypto/crypto.js"></script>
+    <script src="../src/colonies.js"></script>
+
+</head>
+
+<body>
+    <img id="lamp" src="./lamp_off.png">
+    <script>
+        $(function () {
+            let colonyId = "e562d0c89b956d4ed686a309417be513fde80a430578bf9e7af9c0a5675f62d8"
+            let executorId = "1efef9c0360afa2aa3a8179ab2ed1fd14d758956ab72a4e2c12844b7733c5a51"
+            let executorPrvKey = "16f0350d35b7609f3c1c4174a384c2913f893b694dd274829dddd436f69074ad" 
+            let colonies = new Colonies("localhost", "50080")
+
+            function assign() {
+                colonies.assignLatest(colonyId, -1, executorPrvKey)
+                    .then((process) => {
+                        console.log(process)
+                        let args = process.spec.args
+                        if (process.in.length > 0) {
+                            args = process.in
+                        }
+
+                        if (process.spec.funcname == "set_lamp_state") {
+                            if (args[0] == "on") {
+                                $("#lamp").attr("src", "./lamp_on.png");
+                            }
+                            if (args[0] == "off") {
+                                $("#lamp").attr("src", "./lamp_off.png");
+                            }
+
+                            colonies.close(process.processid, executorPrvKey)
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            }
+
+            function subscribe() {
+                colonies.subscribeProcesses("lamp_executor", 30, 0, executorPrvKey, (process) => { // re-subscribe every 30 seconds
+                    assign()
+                })
+                    .catch(() => {
+                        setTimeout(() => {
+                            assign()
+                            subscribe()
+                        }, 2000);
+                    })
+            }
+
+            colonies.load().then(() => {
+                assign()
+                subscribe()
+            })
+        })
+    </script>
+</body>
+
+</html>
