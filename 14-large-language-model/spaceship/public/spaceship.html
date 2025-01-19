@@ -23,10 +23,52 @@
 			let alarm_on = false;
 			let selfdestruct = false;
 
+			// {
+   //  "conditions": {
+   //      "executortype": "lumi-small-hpcexecutor",
+   //      "nodes": 1,
+   //      "processes-per-node": 1,
+   //      "mem": "1Gi",
+   //      "cpu": "500m",
+   //      "walltime": 200,
+   //      "gpu": {
+   //          "count": 0
+   //      }
+   //  },
+   //  "funcname": "execute",
+   //  "kwargs": {
+   //      "cmd": "sleep",
+   //      "docker-image": "ubuntu:20.04",
+   //      "args": [
+   //          "30"
+   //      ]
+   //  },
+   //  "maxwaittime": -1,
+   //  "maxexectime": 100,
+
+
+			function notifyHal() {
+				func_spec = {
+					"conditions": {
+						"executortype": "hal9000",
+						"colonyname": colonyName,
+					},
+					"funcname": "chat",
+					"args": ["Alien lifeform detected in the spaceship!"]
+				}
+				colonies.submit(func_spec, executorPrvKey)
+					.then((process) => {
+						console.log("Chat process submitted")
+					})
+					.catch((err) => {
+						console.log(err)
+					}
+				)	
+			}
+
 			function updateSpaceship() {
 				if (selfdestruct) {
 			        $("#spaceship").attr("src", "./nuclear.png");
-					const audio = document.getElementById("explosionSound");
 				} else if (alien_detected && alarm_on) {
 			        $("#spaceship").attr("src", "./spaceship_alarm_alien.png");
 			    } else if (alien_detected) {
@@ -50,6 +92,7 @@
 							}
 							updateSpaceship()
 							colonies.close(process.processid, executorPrvKey)
+							notifyHal()
 						} else if (process.spec.funcname == "setalarm") {
 							if (process.spec.args[0] == "true") {
 								alarm_on = true
