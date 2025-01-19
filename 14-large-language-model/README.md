@@ -10,7 +10,7 @@ This integration unlocks new possibilities for developing dynamic, adaptive, and
 ## What Are We Going to Implement?
 Imagine a spaceship on a mission to Jupiter to investigate a distress signal detected from Europa, one of Jupiters moons.
 
-The spaceship is more than just a conventional vessel—it is a self-organizing system where interconnected components form a cybernetic colony, seamlessly spanning the entire ship and autonomously managing its functions.
+*The spaceship is more than just a conventional vessel—it is a self-organizing system where interconnected components form a cybernetic colony, seamlessly spanning the entire ship and autonomously managing its functions.*
 Master of the spaceship is *HAL9000*, a sentient computer that orchestrates the mission, making intelligent decisions in response to evolving mission events.
 
 In this tutorial, we will model this system using ColonyOS, leveraging ColonyOS distributed execution model to simulate autonomous decision-making, resource allocation, and mission-critical computations.
