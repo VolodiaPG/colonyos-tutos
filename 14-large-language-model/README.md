@@ -195,7 +195,7 @@ colonies function exec --func setalien --args true --targettype spaceship
 
 A problem with HAL9000 is that it is based on the *2001: A Space Odyssey movie/book* and can sometimes disobey commands. Try modifying the code below to change this behaviour:
 
-```json
+```python
 messages = [
     {
         "role": "system",
