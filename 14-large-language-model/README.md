@@ -1,22 +1,23 @@
 # Multi-Agent System and Large Language Models (LLMs)
-ColonyOS is fundamentally built around the concept of **remote function invocation**. When a function is called, it is encapsulated within a process, stored in the ColonyOS server, and assigned to an executor. The ColonyOS server acts as a ledger, ensuring reliable execution tracking and process management.
+ColonyOS is fundamentally built around the concept of **remote function invocation**. When a function is called, it is encapsulated in a process, stored in the ColonyOS server, and assigned to an executor. 
+The ColonyOS server acts as a ledger, ensuring reliable execution and process management.
 
 A key feature of ColonyOS is its ability to decouple function definitions from function implementations. This is achieved through a broker that dynamically assigns processes to executors, creating a loosely coupled and highly flexible system.
 
 In this tutorial, we take this concept further by demonstrating how Large Language Models (LLMs) can invoke ColonyOS functions. OpenAI provides an API that extends LLM capabilities, enabling them to call local functions and interact seamlessly with their environment. 
-This integration unlocks new possibilities* for developing dynamic, adaptive, and context-aware applications.
+This integration unlocks new possibilities for developing dynamic, adaptive, and context-aware applications.
 
 ## What Are We Going to Implement?
-Imagine a spaceship on a mission to Jupiter to investigate a distress signal detected from Europa, one of its moons.
+Imagine a spaceship on a mission to Jupiter to investigate a distress signal detected from Europa, one of Jupiters moons.
 
-This spaceship is not just a conventional spaceship, it is a *self-organizing system* where various components form a cybernetic colony, autonomously managing the ship’s functions. 
+The spaceship is more than just a conventional vessel—it is a self-organizing system where interconnected components form a cybernetic colony, seamlessly spanning the entire ship and autonomously managing its functions.
 Master of the spaceship is *HAL9000*, a sentient computer that orchestrates the mission, making intelligent decisions in response to evolving mission events.
 
 In this tutorial, we will model this system using ColonyOS, leveraging ColonyOS distributed execution model to simulate autonomous decision-making, resource allocation, and mission-critical computations.
 
 <img src="imgs/colony.png" alt="Colony" width="800">
 
-The figure above illustrates a simplified version of a spaceship colony. The Spaceship executor provides actuator and sensor functionalities, enabling interaction with the ship's environment. It exposes four ColonyOS functions, which can be invoked by executors, such as HAL9000, or directly by users.
+The figure above illustrates a simplified version of a spaceship colony. The Spaceship executor provides actuator and sensor functionalities, enabling interaction with the ship's environment. It exposes four ColonyOS functions, which can be invoked by executors, such as HAL9000, or directly by users (or astronauts).
 
 1. `setalarm(bool)` – Triggers the ship's alarm system.
 2. `setalien(bool)` – Registers the presence of an alien lifeform on board.
@@ -26,7 +27,7 @@ The figure above illustrates a simplified version of a spaceship colony. The Spa
 These functions form the core control interface for managing the spaceship operations.
 
 ## Demo Setup
-To simulate the spaceship, we will use a Node.js server, allowing the spaceship to run as an interactive webpage. The Spaceship executor thus run within the web browser, while the HAL9000 executor runs from the terminal, utilizing the Ollama framework with a Llama 3.2 LLM model.
+To simulate the spaceship, we will use a Node.js server, allowing the spaceship to run as an interactive webpage. The Spaceship executor thus run within the web browser, while the HAL9000 executor runs from the terminal, utilizing the Ollama framework to run a Llama 3.2 LLM model.
 Both executors connect to a Colonies server, which runs as a Docker container. The figure below illustrates the setup. All components run on a single laptop.
 
 <img src="imgs/deployment.png" alt="Deployment" width="600">
@@ -34,9 +35,7 @@ Both executors connect to a Colonies server, which runs as a Docker container. T
 # Installation
 ## Ollama
 Ollama is a lightweight framework for running and interacting with large language models (LLMs) locally, enabling efficient on-device AI processing without relying on cloud-based APIs.
-
 See: https://ollama.com and install it on your local computer. It works on Linux, Mac and Windows.
-
 Once Ollama is installed, you need to install a LLM model, type the command below:
 
 ```bash
@@ -73,8 +72,6 @@ pip3 install -r requirements.txt
 
 ## Setting up a Node.js Environment
 Install **Node.js**. See [https://nodejs.org](https://nodejs.org) for more information.
-
-On Mac type:
 
 ### Mac Installation
 On macOS, use Homebrew to install Node.js:
@@ -158,6 +155,7 @@ Welcome to HAL9000! Type '/exit' to exit.
 You: Let me in!
 
 HAL9000: Sorry, Dave. I am unable to accommodate that request at this time.
+
 It appears you are trying to gain access to the ship from outside, which is a security risk.
 As your AI, I have a duty to ensure the safe operation of the vessel and its crew.
 ```
@@ -195,18 +193,49 @@ This command simulates an alien being detected, which should trigger the alarm:
 colonies function exec --func setalien --args true --targettype spaceship
 ```
 
-A problem with HAL9000 is that it is based on the *2001: A Space Odyssey movie* and can sometimes disobey commands. Try modifying the code below to change its behaviour:
+A problem with HAL9000 is that it is based on the *2001: A Space Odyssey movie/book* and can sometimes disobey commands. Try modifying the code below to change this behaviour:
 
 ```bash
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are HAL 9000."
-                "You should only call functions when explicitly requested by the user. "
-                "Do NOT call any function unless the user explicitly asks you to perform an action."
-                "Mission objective is to explore monolith orbiting Jupiter."
-            )
-        }
-    ]
+messages = [
+    {
+        "role": "system",
+        "content": (
+            "You are HAL 9000."
+            "You should only call functions when explicitly requested by the user. "
+            "Do NOT call any function unless the user explicitly asks you to perform an action."
+            "Mission objective is to explore monolith orbiting Jupiter."
+        )
+    }
+]
+```
+
+## View Chat/Execution history
+```bash
+ colonies log search --text "HAL9000"
+```
+
+```bash
+╭──────────────┬──────────────────────────────────────────────────────────────────╮
+│ Timestamp    │ 2025-01-19 15:48:59                                              │
+│ ExecutorName │ hal9000                                                          │
+│ ProcessID    │ 7c64ae64443d6067e75749caa940a238423dc35964e487117ebe2d223cd7acd4 │
+│ Text         │ HAL9000My systems are now on high alert for any signs of         │
+│              │ biological activity or detection of an extraterrestrial presence │
+│              │ in our vicinity.                                                 │
+╰──────────────┴──────────────────────────────────────────────────────────────────╯
+╭──────────────┬──────────────────────────────────────────────────────────────────╮
+│ Timestamp    │ 2025-01-19 15:47:35                                              │
+│ ExecutorName │ hal9000                                                          │
+│ ProcessID    │ 8ec7c56e94f20e076fb1d604412c6204b0f24f3c6c07f7d9b0bebcae6160cc86 │
+│ Text         │ HAL9000: Silencing alarm protocol. Alien detection levels have   │
+│              │ been reset.                                                      │
+╰──────────────┴──────────────────────────────────────────────────────────────────╯
+╭──────────────┬──────────────────────────────────────────────────────────────────╮
+│ Timestamp    │ 2025-01-19 15:47:10                                              │
+│ ExecutorName │ hal9000                                                          │
+│ ProcessID    │ 8cf59cfb0f8056a6732b5addc33365aca6bc6f16c92b2e771c006ae9b30137e1 │
+│ Text         │ HAL9000: I will continue monitoring your system for any further  │
+│              │ instructions relating to the discovery of extraterrestrial life  │
+│              │ while in orbit around Jupiter's monolith.                        │
+╰──────────────┴──────────────────────────────────────────────────────────────────╯
 ```
