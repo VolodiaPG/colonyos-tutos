@@ -219,7 +219,7 @@ messages = [
 │ Timestamp    │ 2025-01-19 15:48:59                                              │
 │ ExecutorName │ hal9000                                                          │
 │ ProcessID    │ 7c64ae64443d6067e75749caa940a238423dc35964e487117ebe2d223cd7acd4 │
-│ Text         │ HAL9000My systems are now on high alert for any signs of         │
+│ Text         │ HAL9000: My systems are now on high alert for any signs of       │
 │              │ biological activity or detection of an extraterrestrial presence │
 │              │ in our vicinity.                                                 │
 ╰──────────────┴──────────────────────────────────────────────────────────────────╯
@@ -236,6 +236,6 @@ messages = [
 │ ProcessID    │ 8cf59cfb0f8056a6732b5addc33365aca6bc6f16c92b2e771c006ae9b30137e1 │
 │ Text         │ HAL9000: I will continue monitoring your system for any further  │
 │              │ instructions relating to the discovery of extraterrestrial life  │
-│              │ while in orbit around Jupiter's monolith.                        │
+│              │ while in orbit around Jupiter.                                   │
 ╰──────────────┴──────────────────────────────────────────────────────────────────╯
 ```
