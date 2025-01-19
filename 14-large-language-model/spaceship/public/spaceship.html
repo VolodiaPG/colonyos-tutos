@@ -12,7 +12,8 @@
 
 <body style="background-color: black;">
     <img id="spaceship" src="./spaceship.png">
-    <script>
+    
+	<script>
         $(function () {
             let colonyName = "dev"
             let executorId = "1efef9c0360afa2aa3a8179ab2ed1fd14d758956ab72a4e2c12844b7733c5a51"
@@ -25,6 +26,7 @@
 			function updateSpaceship() {
 				if (selfdestruct) {
 			        $("#spaceship").attr("src", "./nuclear.png");
+					const audio = document.getElementById("explosionSound");
 				} else if (alien_detected && alarm_on) {
 			        $("#spaceship").attr("src", "./spaceship_alarm_alien.png");
 			    } else if (alien_detected) {

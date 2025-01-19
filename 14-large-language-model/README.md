@@ -73,3 +73,8 @@ colonies executor add --spec spaceship_executor.json --executorid 1efef9c0360afa
 │ spaceship  │ spaceship          │          │ 0001-01-01 00:53:28 │
 │ dev-docker │ container-executor │ n/a      │ 2025-01-18 13:26:45 │
 ╰────────────┴────────────────────┴──────────┴─────────────────────╯
+
+
+colonies executor add --spec hal9000_executor.json --executorid f682a0f034fcdeae797429bb779d8cdda425537acf045112f1bfd63f6d8eced8 --approve
+
+colonies executor add --spec monitor_executor.json --executorid 13803a04fcf4c8b8aba32988c62036dcfc854dd70c2aa5f8dd52905e744261ab --approve

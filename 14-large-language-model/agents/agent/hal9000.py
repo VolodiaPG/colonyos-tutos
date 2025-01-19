@@ -8,7 +8,9 @@ import threading
 from pycolonies import FuncSpec, Conditions
 from pycolonies import colonies_client
 
-colonies, colonyname, colony_prvkey, executor_name, prvkey = colonies_client()
+colonies, colonyname, colony_prvkey, _, _ = colonies_client()
+executorid = "f682a0f034fcdeae797429bb779d8cdda425537acf045112f1bfd63f6d8eced8"
+executor_prvkey = "ee7838c49280642f30b6b555e49641072a318d1979abac9f3e39aa4e59b029df"
 
 # OpenAI config, API key be set with OPENAI_API_KEY environment variable
 openai_config = {
@@ -44,7 +46,7 @@ def sound_alarm(args):
         maxretries=0
     )
     
-    process = colonies.submit_func_spec(func_spec, prvkey)
+    process = colonies.submit_func_spec(func_spec, executor_prvkey)
     print("Process", process.processid, "submitted")
 
     return "Alarm has been sounded"
@@ -67,7 +69,7 @@ def self_destruct(args):
         maxretries=0
     )
     
-    process = colonies.submit_func_spec(func_spec, prvkey)
+    process = colonies.submit_func_spec(func_spec, executor_prvkey)
     print("Process", process.processid, "submitted")
     
     return "Self-destruct sequence initiated! The ship will self-destruct in T minus 20 seconds."
@@ -181,17 +183,6 @@ def chatbot_loop(model, client):
                 function_name = tool_call.function.name
                 function_args = json.loads(tool_call.function.arguments or "{}")
 
-                # if function_name == "define_rule" and "rules" not in external_message.lower():
-                #     logging.warning(f"Skipping unintended function call: {function_name}")
-                #     continue
-
-                # print("--------------------------------------")
-                # print(f"Tool call: {tool_call.function.name}")
-                # print(f"Arguments: {tool_call.function.arguments}")
-                # print("--------------------------------------")
-                function_name = tool_call.function.name
-                function_args = json.loads(tool_call.function.arguments or "{}")
-
                 logging.debug('Processing tool call: %s', function_name)
 
                 func = assistant_functions.get(function_name)
@@ -204,7 +195,9 @@ def chatbot_loop(model, client):
                     }
                     messages.append(result_message)
         else:
-            print(f'HAL9000: {response.choices[0].message.content}')
+            reply = response.choices[0].message.content
+            print(f'HAL9000: {reply}')
+            done_queue.put(reply)
             continue
 
         try:
@@ -212,14 +205,13 @@ def chatbot_loop(model, client):
                 model=model,
                 messages=messages
             )
-            print(f'HAL9000: {response.choices[0].message.content}')
-            messages.append(response.choices[0].message)
+            reply = response.choices[0].message.content
+            print(f'HAL9000: {reply}')
+            done_queue.put(reply)
 
         except Exception as e:
             logging.error(f"Error processing follow-up response: {e}")
             done_queue.put(False)
-        
-        done_queue.put(True)
 
 def user_input():
     print("Welcome to HAL9000! Type '/exit' to exit.")
@@ -230,9 +222,28 @@ def user_input():
             break
         if len(user_input) > 0:
             message_queue.put(user_input)
-            done_queue.get(block=True)  # wait for the chatbot to finish processing
+            # Wait for the chatbot to finish processing
+            # Note this code is just for demonstration purposes, if the HAL9000 executor
+            # is assigned a process, there will be a race condition between the chatbot
+            # and the executor. This code is not production ready.
+            done_queue.get(block=True)  
         else:
             print("Please enter a message.")
+
+def executor_loop():
+    while (True):
+        try:
+            process = colonies.assign(colonyname, 10, executor_prvkey)
+            print("Process", process.processid, "is assigned to HAL9000 executor")
+            if process.spec.funcname == "chat":
+                message_queue.put(process.spec.args[0])
+                result = done_queue.get(block=True)
+                colonies.add_log(process.processid, "HAL9000" + result, executor_prvkey)
+
+            colonies.close(process.processid, [], executor_prvkey)
+        except Exception as err:
+            print(err)
+            pass
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LLM Chatbot')
@@ -264,5 +275,8 @@ if __name__ == "__main__":
 
     chatbot_thread = threading.Thread(target=chatbot_loop, args=(model, client), daemon=True)
     chatbot_thread.start()
+    
+    executor_thread = threading.Thread(target=executor_loop, args=(), daemon=True)
+    executor_thread.start()
 
     user_input()
