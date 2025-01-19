@@ -214,7 +214,7 @@ messages = [
  colonies log search --text "HAL9000"
 ```
 
-```bash
+```console
 ╭──────────────┬──────────────────────────────────────────────────────────────────╮
 │ Timestamp    │ 2025-01-19 15:48:59                                              │
 │ ExecutorName │ hal9000                                                          │
