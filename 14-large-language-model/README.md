@@ -1,4 +1,4 @@
-# Exploring ColonyOS with Large Language Models (LLMs)
+# Multi-Agent System and Large Language Models (LLMs)
 ColonyOS is fundamentally built around the concept of **remote function invocation**. When a function is called, it is encapsulated within a process, stored in the ColonyOS server, and assigned to an executor. The ColonyOS server acts as a ledger, ensuring reliable execution tracking and process management.
 
 A key feature of ColonyOS is its ability to decouple function definitions from function implementations. This is achieved through a broker that dynamically assigns processes to executors, creating a loosely coupled and highly flexible system.
@@ -10,11 +10,11 @@ This integration unlocks new possibilities* for developing dynamic, adaptive, an
 Imagine a spaceship on a mission to Jupiter to investigate a distress signal detected from Europa, one of its moons.
 
 This spaceship is not just a conventional spaceship, it is a *self-organizing system* where various components form a cybernetic colony, autonomously managing the ship’s functions. 
-At the heart of this operation is *HAL9000*, a sentient computer that orchestrates the mission, making intelligent decisions in response to evolving mission events.
+Master of the spaceship is *HAL9000*, a sentient computer that orchestrates the mission, making intelligent decisions in response to evolving mission events.
 
-In this tutorial, we will model this system using ColonyOS, leveraging its distributed execution model to simulate autonomous decision-making, resource allocation, and mission-critical computations.
+In this tutorial, we will model this system using ColonyOS, leveraging ColonyOS distributed execution model to simulate autonomous decision-making, resource allocation, and mission-critical computations.
 
-![Colony](imgs/colony.png)
+<img src="imgs/colony.png" alt="Colony" width="500">
 
 The figure above illustrates a simplified version of a spaceship colony. The Spaceship executor provides actuator and sensor functionalities, enabling interaction with the ship's environment. It exposes four ColonyOS functions, which can be invoked by executors, such as HAL9000, or directly by users.
 
@@ -29,7 +29,7 @@ These functions form the core control interface for managing the spaceship opera
 To simulate the spaceship, we will use a Node.js server, allowing the spaceship to run as an interactive webpage. The Spaceship executor thus run within the web browser, while the HAL9000 executor runs from the terminal, utilizing the Ollama framework with a Llama 3.2 LLM model.
 Both executors connect to a Colonies server, which runs as a Docker container. The figure below illustrates the setup. All components run on a single laptop.
 
-![Deployment](imgs/deployment.png)
+<img src="imgs/deployment.png" alt="Deployment" width="500">
 
 # Installation
 ## Ollama
@@ -175,7 +175,7 @@ colonies function exec --func setalarm --args true --targettype spaceship
 colonies function exec --func setalien --args true --targettype spaceship
 ```
 
-## Initialize self-destruction sequence:
+## Initialize self-destruction sequence
 ```bash
 colonies function exec --func selfdestruct --args false --targettype spaceship
 ```
