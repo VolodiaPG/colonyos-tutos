@@ -14,7 +14,7 @@ Master of the spaceship is *HAL9000*, a sentient computer that orchestrates the 
 
 In this tutorial, we will model this system using ColonyOS, leveraging ColonyOS distributed execution model to simulate autonomous decision-making, resource allocation, and mission-critical computations.
 
-<img src="imgs/colony.png" alt="Colony" width="500">
+<img src="imgs/colony.png" alt="Colony" width="800">
 
 The figure above illustrates a simplified version of a spaceship colony. The Spaceship executor provides actuator and sensor functionalities, enabling interaction with the ship's environment. It exposes four ColonyOS functions, which can be invoked by executors, such as HAL9000, or directly by users.
 
@@ -29,7 +29,7 @@ These functions form the core control interface for managing the spaceship opera
 To simulate the spaceship, we will use a Node.js server, allowing the spaceship to run as an interactive webpage. The Spaceship executor thus run within the web browser, while the HAL9000 executor runs from the terminal, utilizing the Ollama framework with a Llama 3.2 LLM model.
 Both executors connect to a Colonies server, which runs as a Docker container. The figure below illustrates the setup. All components run on a single laptop.
 
-<img src="imgs/deployment.png" alt="Deployment" width="500">
+<img src="imgs/deployment.png" alt="Deployment" width="600">
 
 # Installation
 ## Ollama
