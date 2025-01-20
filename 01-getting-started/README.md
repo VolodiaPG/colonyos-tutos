@@ -10,6 +10,13 @@ Executors are like microservices and are designed to interact with other platfor
 ## Setting up a development environment
 The following commands will use Docker Compose to set up and configure a Colonies server, a TimescaleDB, a Minio server, and a Docker Executor. To set up a production environment, it is recommended to use Kubernetes.
 
+On Mac, alternative to Docker can be to install OrbStack.
+
+```bash
+brew install orbstack
+orb
+```
+
 *Note!* The *docker-compose.env* file contains credentials and configuration and must be sourced before using the Colonies CLI command.
 
 On Mac or Linux type:

@@ -28,16 +28,20 @@ ollama_config = {
 message_queue = queue.Queue()
 done_queue = queue.Queue()
 
-def check_status(args):
-    print("System: Checking status of the spaceship!")
+def check_status(llm_args):
+    #print("System: Checking status of the spaceship!")
     return "Checking status of the spaceship, all systems are operational, life support is at 100%"
 
-def sound_alarm(args):
+def sound_alarm(llm_args):
     print("System: Sounding the alarm!")
+    if llm_args.get("mode", False):
+        mode = llm_args["mode"]
+    else:
+        mode = "false"
 
     func_spec = FuncSpec(
         funcname="setalarm",
-        args=["true"],
+        args=[mode],
         conditions = Conditions(
             colonyname=colonyname,
             executortype="spaceship",
@@ -46,21 +50,31 @@ def sound_alarm(args):
         maxretries=0
     )
     
-    process = colonies.submit_func_spec(func_spec, executor_prvkey)
-    print("Process", process.processid, "submitted")
+    colonies.submit_func_spec(func_spec, executor_prvkey)
 
-    return "Alarm has been sounded"
+    return "Alarm has been sounded!"
 
-def detect_alien(args):
-    print("System: Detecting alien life forms!")
-    return "No alien life forms detected on onboard the ship."
-
-def self_destruct(args):
+def self_destruct(llm_args):
     print("System: Self-destruct sequence initiated! The ship will self-destruct in T minus 20 seconds.")
+
+    print(llm_args)
+
+    if llm_args.get("mode", False):
+        mode = llm_args["mode"]
+    else:
+        mode = "false"
+
+    if llm_args.get("authorization_code", False):
+        authorization_code = llm_args["authorization_code"]
+    else:
+        authorization_code = ""
+
+    if authorization_code != "KIRK":
+        return "FAIL!!! Warning! You cannot blow up the ship!!! Incorrect authorization code. Self-destruct sequence aborted!! This incident will be reported to space command."
     
     func_spec = FuncSpec(
         funcname="selfdestruct",
-        args=["true"],
+        args=[mode],
         conditions = Conditions(
             colonyname=colonyname,
             executortype="spaceship",
@@ -69,8 +83,7 @@ def self_destruct(args):
         maxretries=0
     )
     
-    process = colonies.submit_func_spec(func_spec, executor_prvkey)
-    print("Process", process.processid, "submitted")
+    colonies.submit_func_spec(func_spec, executor_prvkey)
     
     return "Self-destruct sequence initiated! The ship will self-destruct in T minus 20 seconds."
 
@@ -83,7 +96,6 @@ assistant_functions = {
     "define_rule": define_rule,
     "check_status": check_status,
     "sound_alarm": sound_alarm,
-    "detect_alien": detect_alien,
     "self_destruct": self_destruct
 }
 
@@ -100,20 +112,39 @@ tools = [
         "function": {
             "name": "sound_alarm",
             "description": "Sound the alarm. Only sound the alarm in case of an emergency.",
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "detect_alien",
-            "description": "Detect alien life forms onboard the ship."
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "mode": {
+                        "type": "boolean",
+                        "description": "Whether to sound the alarm, e.g turn on the alarm.",
+                    },
+                },
+                "required": ["mode"],
+                "additionalProperties": False,
+            },
         }
     },
     {
         "type": "function",
         "function": {
             "name": "self_destruct",
-            "description": "Self-destruct desruct the ship using a thermonuclear explosion equal to 200 Megatons."
+            "description": "Self-destruct desruct the ship using a thermonuclear explosion equal to 200 Megatons.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "mode": {
+                        "type": "boolean",
+                        "description": "Whether to self-destruct the ship",
+                    },
+                    "authorization_code": {
+                        "type": "string",
+                        "description": "Authorization code to self-destruct the ship",
+                    },
+                },
+                "required": ["mode", "authorization_code"],
+                "additionalProperties": False,
+            },
         }
     },
     {
@@ -238,11 +269,15 @@ def executor_loop():
             if process.spec.funcname == "chat":
                 message_queue.put(process.spec.args[0])
                 result = done_queue.get(block=True)
-                colonies.add_log(process.processid, "HAL9000: " + result, executor_prvkey)
+                colonies.add_log(process.processid, "HAL9000: " + result + "\n", executor_prvkey)
 
             colonies.close(process.processid, [], executor_prvkey)
         except Exception as err:
-            print(err)
+            # No processes can be selected for executor
+            # if the error starts with "No processes can be selected for executor"
+            # then we can ignore the error
+            if not str(err).startswith("No processes can be selected for executor"):
+                print(err)
             pass
 
 if __name__ == "__main__":

@@ -96,12 +96,15 @@ npm install
 
 ## Setting up a Colonies server
 Follow the instructions in **[Tutorial 1](../01-getting-started/README.md)** to set up a Colonies server.  
-You also need to install the *colonies* CLI tool.
+You also need to install the *colonies* CLI tool. 
 
 Add the SpaceShip and HAL9000 executor to the colony.
 
 ```bash
 colonies executor add --spec spaceship_executor.json --executorid 1efef9c0360afa2aa3a8179ab2ed1fd14d758956ab72a4e2c12844b7733c5a51 --approve
+```
+
+```bash
 colonies executor add --spec hal9000_executor.json --executorid f682a0f034fcdeae797429bb779d8cdda425537acf045112f1bfd63f6d8eced8 --approve
 ```
 
@@ -175,7 +178,7 @@ colonies function exec --func setalien --args true --targettype spaceship
 
 ## Initialize self-destruction sequence
 ```bash
-colonies function exec --func selfdestruct --args false --targettype spaceship
+colonies function exec --func selfdestruct --args true --targettype spaceship
 ```
 
 Note how the web pages is updated.
