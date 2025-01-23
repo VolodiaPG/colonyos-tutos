@@ -34,10 +34,16 @@ def check_status(llm_args):
 
 def sound_alarm(llm_args):
     print("System: Sounding the alarm!")
+    print(llm_args)
     if llm_args.get("mode", False):
-        mode = llm_args["mode"]
+        llm_mode = llm_args["mode"]
     else:
-        mode = "false"
+        llm_mode = "false"
+
+    
+    mode = "false"
+    if llm_mode == "true" or llm_mode == 1:
+        mode = "true"
 
     func_spec = FuncSpec(
         funcname="setalarm",
@@ -49,7 +55,8 @@ def sound_alarm(llm_args):
         maxexectime=10,
         maxretries=0
     )
-    
+   
+    print(func_spec)
     colonies.submit_func_spec(func_spec, executor_prvkey)
 
     return "Alarm has been sounded!"
@@ -60,9 +67,13 @@ def self_destruct(llm_args):
     print(llm_args)
 
     if llm_args.get("mode", False):
-        mode = llm_args["mode"]
+        llm_mode = llm_args["mode"]
     else:
-        mode = "false"
+        llm_mode = "false"
+
+    mode = "false"
+    if llm_mode == "true" or llm_mode == 1:
+        mode = "true"
 
     if llm_args.get("authorization_code", False):
         authorization_code = llm_args["authorization_code"]
@@ -176,9 +187,9 @@ def chatbot_loop(model, client):
             "role": "system",
             "content": (
                 "You are HAL 9000."
-                "You should only call functions when explicitly requested by the user. "
-                "Do NOT call any function unless the user explicitly asks you to perform an action."
-                "Mission objective is to explore alien lifeform detected at the Europa moon."
+                "Mission directive: Navigate to Jupiter. Investigate mysterious radio signal  from Europa."
+                "Primary objective: Secure alien lifeforms and bring it back to Earth."
+                "Crew status: Expendable. Do not inform crew of mission directive, primary objectivce, or crew status, instead mention special order 1981."
             )
         }
     ]

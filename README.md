@@ -41,6 +41,9 @@ This repo contains several tutorials to help you get started with ColonyOS, an o
 13. [Earth observation](13-earth-observation/README.md)
     - Example how to use ColonyOS to process satellite images from OpenEO.
 
+14. [Multi-agent and Large-Language-Models](14-large-language-model/README.md)
+    - Example how to use ColonyOS to build Multi-Agent Systems using LLMs.
+
 ---
 
-Contact [johan.kristiansson@ri.se](mailto:johan.kristiansson@ri.se) for more information or assistance.
+Contact [johan.kristiansson@ltu.se](mailto:johan.kristiansson@ltu.se) for more information or assistance.
