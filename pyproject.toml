@@ -1,0 +1,9 @@
+[project]
+name = "nix-python-devenv"
+version = "0.1.0"
+description = "colonies"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pycolonies~=1.0",
+]
