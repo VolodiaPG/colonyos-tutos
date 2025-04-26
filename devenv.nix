@@ -4,7 +4,29 @@
   config,
   inputs,
   ...
-}: {
+}: let
+  python = pkgs.python3.withPackages (ps:
+    with ps; [
+      (
+        ps.buildPythonPackage rec {
+          pname = "pycolonies";
+          version = "v1.0.1";
+          src = pkgs.fetchFromGitHub {
+            owner = "colonyos";
+            repo = "pycolonies";
+            rev = "52aaf56";
+            hash = "sha256-CrAzoZLTyLPa/Ddk9vhKJW7zYJB3pT9Tkvr7HeHsC5I=";
+          };
+          propagatedBuildInputs = with ps; [
+            requests
+            websocket-client
+            pydantic
+            boto3
+          ];
+        }
+      )
+    ]);
+in {
   enterShell = ''
     export LANG=en_US.UTF-8
     export LANGUAGE=en_US.UTF-8
@@ -59,12 +81,10 @@
   '';
   languages.python = {
     enable = true;
-    uv = {
-      enable = true;
-      sync.enable = true;
-    };
+    package = python;
   };
-  packages = with pkgs; [
+  packages = [
+    python
     (pkgs.buildGoModule rec {
       pname = "colonies";
       version = "v2.0.0";
